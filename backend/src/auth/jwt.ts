@@ -1,0 +1,31 @@
+import * as jose from "jose";
+
+const alg = "Ed25519"
+const publicKeyStr = process.env.JWT_PUBLIC_KEY || "";
+const privateKeyStr = process.env.JWT_PRIVATE_KEY || "";
+const publicKey = await jose.importSPKI(publicKeyStr, alg);
+const privateKey = await jose.importPKCS8(privateKeyStr, alg);
+
+async function sign(claims: any) {
+    return await new jose.SignJWT(claims)
+        .setProtectedHeader({ alg })
+        .setIssuedAt()
+        .setIssuer('utodo')
+        .setAudience('utodo')
+        .setExpirationTime('1y')
+        .sign(privateKey)
+}
+
+async function verify(jwt: string) {
+    const {payload} = await jose.jwtVerify(jwt, publicKey, {
+        issuer: 'utodo',
+        audience: 'utodo'
+    })
+
+    return payload;
+}
+
+export default {
+    sign,
+    verify
+}
