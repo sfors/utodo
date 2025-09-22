@@ -1,16 +1,11 @@
 import express from "express";
-import {WebSocketServer, WebSocket} from "ws";
+import {WebSocketServer} from "ws";
 import http from "http";
 import itemRoutes from "./routes/items.js"
 import listRoutes from "./routes/lists.js"
 import userRoutes from "./routes/users.js"
-
-// import jwt from "./auth/jwt.js";
-//
-// const jwt1 = await jwt.sign({userId: 1});
-// console.log("jwt1: ", jwt1)
-// const payload = await jwt.verify(jwt1);
-// console.log("payload: ", payload);
+import authRoutes from "./routes/auth.js"
+import {authenticate} from "./auth/middleware.js";
 
 const port = 3001;
 const app = express();
@@ -29,9 +24,12 @@ wss.on('connection', (ws, request) => {
     ws.send('something');
 });
 
-app.use(itemRoutes);
-app.use(listRoutes);
-app.use(userRoutes);
+app.use(authenticate);
+
+app.use("/api/items", itemRoutes);
+app.use("/api/lists", listRoutes);
+app.use("/api/users", userRoutes);
+app.use("/api/auth", authRoutes);
 
 server.listen(port);
 

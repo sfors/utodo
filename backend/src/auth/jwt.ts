@@ -6,8 +6,13 @@ const privateKeyStr = process.env.JWT_PRIVATE_KEY || "";
 const publicKey = await jose.importSPKI(publicKeyStr, alg);
 const privateKey = await jose.importPKCS8(privateKeyStr, alg);
 
-async function sign(claims: any) {
-    return await new jose.SignJWT(claims)
+interface Claims {
+    userId: string;
+    email: string;
+}
+
+async function sign(claims: Claims) {
+    return await new jose.SignJWT(claims as any)
         .setProtectedHeader({ alg })
         .setIssuedAt()
         .setIssuer('utodo')
@@ -16,8 +21,8 @@ async function sign(claims: any) {
         .sign(privateKey)
 }
 
-async function verify(jwt: string) {
-    const {payload} = await jose.jwtVerify(jwt, publicKey, {
+async function verify(jwt: string): Promise<Claims> {
+    const {payload}: {payload: Claims} = await jose.jwtVerify(jwt, publicKey, {
         issuer: 'utodo',
         audience: 'utodo'
     })

@@ -1,6 +1,7 @@
+import {v7 as uuidv7} from "uuid";
 import sql from "./db.js";
 
-async function getLists(ownerId: number) {
+async function getLists(ownerId: string) {
     return await sql`
         select *
         from lists
@@ -8,7 +9,7 @@ async function getLists(ownerId: number) {
 }
 
 async function addList({name, ownerId}: { name: string, ownerId: number }) {
-    const listToInsert = {name, owner_id: ownerId};
+    const listToInsert = {id: uuidv7(), name, owner_id: ownerId};
     return await sql`
         insert into lists ${sql(listToInsert)}
         returning *
