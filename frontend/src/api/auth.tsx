@@ -1,11 +1,11 @@
 import {useMutation} from "@tanstack/react-query";
-import {request} from "./api.ts";
+import {post} from "./api.ts";
 import {useAuth} from "../AuthContext.tsx";
 import type {User} from "../model.ts";
 import {navigateTo} from "../router/util.tsx";
 
 async function login(email: string) {
-  return request("/api/auth/login", {method: "POST", body: {email}});
+  return post("/api/auth/login", {body: {email}});
 }
 
 interface VerifyResponse {
@@ -14,7 +14,7 @@ interface VerifyResponse {
 }
 
 async function verify({email, code}: {email: string, code: string}) {
-  return request<VerifyResponse>("/api/auth/verify", {method: "POST", body: {email, code}});
+  return post<VerifyResponse>("/api/auth/verify", {body: {email, code}});
 }
 
 export function useLogin() {

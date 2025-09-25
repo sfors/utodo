@@ -8,6 +8,4 @@ router.use(express.json());
 router.use(requireAuth);
 
 
-
-
 export default router;

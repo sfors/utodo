@@ -4,3 +4,12 @@ export interface User {
   firstName: string;
   lastName: string;
 }
+
+export interface List {
+  id: string;
+  ownerId: string;
+  ownerName: string;
+  name: string;
+  frozen: boolean;
+}
+

@@ -1,4 +1,4 @@
-export async function request<T>(url: string, {method = "GET", body}: {method: "GET" | "POST", body: any}): Promise<T> {
+export async function request<T>(url: string, {method, body}: {method: "GET" | "POST", body?: any}): Promise<T> {
   let options: RequestInit = {method};
 
   if (method === "POST") {
@@ -19,4 +19,12 @@ export async function request<T>(url: string, {method = "GET", body}: {method: "
   }
 
   return response.json();
+}
+
+export async function get<T>(url: string): Promise<T> {
+  return request<T>(url, {method: "GET"});
+}
+
+export async function post<T>(url: string, {body}: {body: any}): Promise<T> {
+  return request<T>(url, {body, method: "POST"});
 }

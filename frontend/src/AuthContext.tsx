@@ -12,6 +12,7 @@ interface IAuthContext {
   isAuthenticated: boolean;
   isLoading: boolean;
   login: (user: User, token: string) => void;
+  updateUser: (user: User) => void;
   logout: () => void;
 }
 
@@ -38,6 +39,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({children}
     setState({...state, user, token, isAuthenticated: true});
   }
 
+  function updateUser(user: User) {
+    localStorage.setItem("user", JSON.stringify(user));
+    setState({...state, user});
+  }
+
   function logout() {
     localStorage.removeItem("user");
     localStorage.removeItem("token");
@@ -62,7 +68,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({children}
 
 
   return (
-    <AuthContext value={{user: state.user, isAuthenticated: state.isAuthenticated, isLoading, login, logout}}>
+    <AuthContext value={{user: state.user, isAuthenticated: state.isAuthenticated, isLoading, login, updateUser, logout}}>
       {children}
     </AuthContext>
   );

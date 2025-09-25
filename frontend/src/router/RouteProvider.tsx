@@ -4,36 +4,37 @@ import type {ReactNode} from "react";
 const RouterContext = createContext<string>("/");
 
 function subscribe(callback: () => void) {
-    window.addEventListener("popstate", callback);
-    window.addEventListener("router:navigate", callback);
+  window.addEventListener("popstate", callback);
+  window.addEventListener("router:navigate", callback);
 
-    return () => {
-        window.removeEventListener("popstate", callback);
-        window.removeEventListener("router:navigate", callback);
-    }
+  return () => {
+    window.removeEventListener("popstate", callback);
+    window.removeEventListener("router:navigate", callback);
+  }
 }
 
 function getSnapshot(): string {
-    return window.location.pathname + "";
+  return window.location.pathname + "";
 }
 
 interface RouteProviderProps {
-    default: ReactNode
-    [key: string]: ReactNode
+  default: ReactNode
+
+  [key: string]: ReactNode
 }
 
 const RouteProvider: React.FC<RouteProviderProps> = (props: RouteProviderProps) => {
-    const path = useSyncExternalStore(subscribe, getSnapshot)
+  const path = useSyncExternalStore(subscribe, getSnapshot)
 
-    console.log("Path: ", path);
+  console.log("Path: ", path);
 
-    const nodeToRender: ReactNode = props[path] || props.default;
+  const nodeToRender: ReactNode = props[path] || props.default;
 
-    return (
-      <RouterContext value={path}>
-          {nodeToRender}
-      </RouterContext>
-    );
+  return (
+    <RouterContext value={path}>
+      {nodeToRender}
+    </RouterContext>
+  );
 }
 
 

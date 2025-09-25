@@ -6,7 +6,7 @@ const Login = ({}) => {
   const loginMutation = useLogin();
   const verifyMutation = useVerify();
 
-  return <div className="min-h-screen flex items-center justify-center font-mono">
+  return <div className="min-h-screen flex items-center justify-center">
     <div className="flex flex-col drop-shadow-sm rounded-3xl w-full max-w-md bg-indigo-950 p-3">
       <div className="flex flex-col drop-shadow-sm rounded-xl w-full max-w-md bg-indigo-100 p-6">
         <div className="flex flex-col items-center justify-center pb-6">
