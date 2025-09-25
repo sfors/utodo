@@ -8,7 +8,7 @@ async function getLists(ownerId: string) {
     `;
 }
 
-async function addList({name, ownerId}: { name: string, ownerId: number }) {
+async function addList({name, ownerId}: { name: string, ownerId: string }) {
     const listToInsert = {id: uuidv7(), name, owner_id: ownerId};
     return await sql`
         insert into lists ${sql(listToInsert)}

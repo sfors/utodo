@@ -1,6 +1,7 @@
 import express, {Router} from 'express';
 import lists from "./../store/lists.js";
 import {requireAuth} from "../auth/middleware.js";
+import items from "../store/items.js";
 
 const router: Router = express.Router();
 
@@ -14,8 +15,22 @@ router.get("", async (req, res) => {
 });
 
 router.post("", async (req, res) => {
+    const userId = req.identity as string;
     const {name} = req.body;
-    const result = await lists.addList({name: name, ownerId: 1});
+    const result = await lists.addList({name: name, ownerId: userId});
+    res.json({result});
+})
+
+router.get("/:listId/items", async (req, res) => {
+    const listId = req.params.listId;
+    const result = await items.getItems(listId);
+    res.json({items: result});
+});
+
+router.post("/:listId/items", async (req, res) => {
+    const listId = req.params.listId;
+    const {name} = req.body;
+    const result = await items.addItem({listId: listId, name: name});
     res.json({result});
 })
 
