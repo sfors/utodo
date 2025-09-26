@@ -50,7 +50,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({children}
     setState({...state, user: null, token: null, isAuthenticated: false});
   }
 
-
   useEffect(() => {
     const token = localStorage.getItem("token");
     const user = localStorage.getItem("user");

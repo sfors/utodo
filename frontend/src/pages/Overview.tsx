@@ -2,6 +2,8 @@ import {useLists} from "../api/lists.tsx";
 import type {List} from "../model.ts";
 import {useState} from "react";
 import Link from "../router/Link.tsx";
+import {useAuth} from "../AuthContext.tsx";
+import {navigateTo} from "../router/util.tsx";
 
 const NewList = ({}) => {
   return (
@@ -17,7 +19,8 @@ const NewList = ({}) => {
 
 const OverviewList = ({list}: { list: List }) => {
   return (
-    <div className="cursor-pointer flex flex-col drop-shadow-sm rounded-3xl bg-indigo-950 p-3">
+    <div className="cursor-pointer flex flex-col drop-shadow-sm rounded-3xl bg-indigo-950 p-3"
+         onClick={() => navigateTo(`/list/${list.id}`)}>
       <div className="h-32 flex flex-col drop-shadow-sm rounded-xl w-full bg-indigo-100  hover:bg-indigo-200 transition-colors duration-200 p-6">
         <div className="flex flex-col grow">
           <div className="font-bold">
@@ -46,6 +49,7 @@ const Overview = ({}) => {
   const [search, setSearch] = useState("");
   const {data, isPending, error} = useLists();
   const filtered = filterLists(search, data);
+  const {logout} = useAuth();
 
   if (isPending) {
     return "Loading...";
@@ -54,8 +58,9 @@ const Overview = ({}) => {
   } else {
     return (
       <div className="max-w-7xl mx-auto flex flex-col mt-2">
-        <div className="text-white flex flex-row justify-end">
-          <Link to="/profile">Profile</Link>
+        <div className="text-white flex flex-row justify-end space-x-3">
+          <Link to="/profile">Profile settings</Link>
+          <a className="underline" href="/" onClick={logout}>Log out</a>
         </div>
         <input className="mt-4 w-full border-gray-400 border-1 bg-indigo-950 text-white rounded-md px-3 py-2 text-xl"
                type="search"

@@ -13,3 +13,14 @@ export interface List {
   frozen: boolean;
 }
 
+export interface Item {
+  id: string;
+  index: number;
+  parentId: string | null;
+  typeId: string | null;
+  description: string | null;
+  name: string | null;
+  done: boolean;
+  customFields: any;
+}
+

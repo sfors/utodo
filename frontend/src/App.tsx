@@ -7,6 +7,7 @@ import RouteProvider from "./router/RouteProvider.tsx";
 import NotFound from "./pages/NotFound.tsx";
 import RequireAuth from "./RequireAuth.tsx";
 import Profile from "./pages/Profile.tsx";
+import List from "./pages/List.tsx";
 
 const queryClient = new QueryClient()
 
@@ -15,6 +16,7 @@ function App() {
     default: <NotFound/>,
     "/": <RequireAuth><Overview/></RequireAuth>,
     "/profile": <RequireAuth><Profile/></RequireAuth>,
+    "/list/:listId": <RequireAuth><List /></RequireAuth>,
     "/login": <Login/>
   }
   return (
