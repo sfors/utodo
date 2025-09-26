@@ -29,8 +29,8 @@ router.get("/:listId/items", async (req, res) => {
 
 router.post("/:listId/items", async (req, res) => {
   const listId = req.params.listId;
-  const {name} = req.body;
-  const result = await items.addItem({listId: listId, name: name});
+  const {name, index, id} = req.body;
+  const result = await items.addItem({listId, name, index, id});
   res.json(result);
 })
 

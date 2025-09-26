@@ -31,13 +31,20 @@ async function getItems(listId: string) {
       select *
       from items
       where list_id = ${listId}
+      order by index
   `;
 
   return result.map(item => mapItem(item));
 }
 
-async function addItem({name, listId}: { name: string, listId: string }) {
-  const itemToInsert = {id: uuidv7(), name, list_id: listId, index: 0};
+async function addItem(item: {name: string, listId: string, index?: number, id?: string}) {
+  const {name, listId} = item;
+  const itemToInsert = {
+    id: item.id ? item.id : uuidv7(),
+    name,
+    list_id: listId,
+    index: item.index ? item.index : 0,
+  };
   return await sql`
       insert into items ${sql(itemToInsert)}
           returning *

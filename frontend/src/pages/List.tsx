@@ -1,4 +1,4 @@
-import {useItems} from "../api/lists.tsx";
+import {useAddItem, useItems} from "../api/lists.tsx";
 import type {Item} from "../model.ts";
 import Link from "../router/Link.tsx";
 import {useAuth} from "../AuthContext.tsx";
@@ -20,7 +20,8 @@ const Item = ({item}: { item: Item }) => {
           </button>
           <Checkbox.Root
             className="cursor-pointer bg-black/30 hover:bg-black/50 w-6 h-6 rounded-sm flex items-center justify-center"
-            defaultChecked id="c1">
+            checked={item.done}
+            id="c1">
             <Checkbox.Indicator className="text-white">
               <Check size={18}/>
             </Checkbox.Indicator>
@@ -41,10 +42,22 @@ const Item = ({item}: { item: Item }) => {
   );
 }
 
-const Items = ({items}: { items: Item[] }) => {
+const Items = ({items, listId}: {items: Item[], listId: string}) => {
+  const [newItem, setNewItem] = useState<string>("");
+  const newIndex = items.length > 0 ? items[0].index - 1000 : 0;
+  const addItem = useAddItem(listId, () => setNewItem(""));
   return (
     <div
       className="mt-6 bg-fuchsia-500/30 backdrop-blur-[2px] rounded-xl border border-white/20 p-4 flex flex-col space-y-1">
+      <form className="mb-2" onSubmit={(e) => {
+        e.preventDefault()
+        addItem.mutate({name: newItem, index: newIndex})
+      }}>
+        <input className="border border-solid rounded-md bg-black/30 border-white/30 text-white w-full px-3 py-2"
+               required
+               value={newItem}
+               onChange={(e) => setNewItem(e.target.value)}/>
+      </form>
       {items.map((item: Item) => <Item key={item.id} item={item}/>)}
     </div>
   );
@@ -66,7 +79,7 @@ const List = ({}) => {
       </div>
       {isPending && "Loading..."}
       {!!error && "Could not fetch items."}
-      {!!data && <Items items={data}/>}
+      {!!data && <Items items={data} listId={listId} />}
     </div>
   );
 }
