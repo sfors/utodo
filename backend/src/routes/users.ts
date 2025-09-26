@@ -1,4 +1,4 @@
-import express, {Router} from 'express';
+import express, {Router} from "express";
 import {requireAuth} from "../auth/middleware.js";
 import users from "../store/users.js";
 
@@ -18,5 +18,6 @@ router.post("/profile", async (req, res) => {
   const {firstName, lastName} = req.body;
   const result = await users.updateUser({id: userId, firstName, lastName});
   res.json(result);
-})
+});
+
 export default router;

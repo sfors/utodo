@@ -1,5 +1,5 @@
-import postgres from 'postgres'
+import postgres from "postgres";
 
-const sql = postgres({ssl: 'require'}) // will use psql environment variables
+const sql = postgres({ssl: "require"}); // will use psql environment variables
 
-export default sql
+export default sql;

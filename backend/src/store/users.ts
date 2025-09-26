@@ -1,13 +1,8 @@
 import type {Row} from "postgres";
 import {v7 as uuidv7} from "uuid";
 import sql from "./db.js";
+import type {User} from "../model.js";
 
-interface User {
-  id: string;
-  email: string;
-  firstName: string;
-  lastName: string;
-}
 
 function mapUser(row: Row): User {
   return {

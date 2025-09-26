@@ -4,11 +4,13 @@ import Link from "../router/Link.tsx";
 import {useAuth} from "../AuthContext.tsx";
 import {usePathParams} from "../router/RouteProvider.tsx";
 import * as Checkbox from "@radix-ui/react-checkbox";
-import {Plus, Check, ChevronRight, ChevronDown} from "lucide-react";
+import {Check, ChevronDown, ChevronRight, Plus} from "lucide-react";
 import {useState} from "react";
+import {useUpdateItem} from "../api/changes.tsx";
 
-const Item = ({item}: { item: Item }) => {
+const Item = ({item, listId}: {item: Item, listId: string}) => {
   const [open, setOpen] = useState(false);
+  const updateItem = useUpdateItem({listId, itemId: item.id});
   return (
     <div className="bg-white/8 rounded-md border border-white/20 p-2">
       <div className="flex flex-row justify-between items-center">
@@ -21,6 +23,10 @@ const Item = ({item}: { item: Item }) => {
           <Checkbox.Root
             className="cursor-pointer bg-black/30 hover:bg-black/50 w-6 h-6 rounded-sm flex items-center justify-center"
             checked={item.done}
+            onCheckedChange={(checked) => {
+              console.log(checked);
+              updateItem.mutate({key: "done", value: checked});
+            }}
             id="c1">
             <Checkbox.Indicator className="text-white">
               <Check size={18}/>
@@ -40,7 +46,7 @@ const Item = ({item}: { item: Item }) => {
       )}
     </div>
   );
-}
+};
 
 const Items = ({items, listId}: {items: Item[], listId: string}) => {
   const [newItem, setNewItem] = useState<string>("");
@@ -50,21 +56,21 @@ const Items = ({items, listId}: {items: Item[], listId: string}) => {
     <div
       className="mt-6 bg-fuchsia-500/30 backdrop-blur-[2px] rounded-xl border border-white/20 p-4 flex flex-col space-y-1">
       <form className="mb-2" onSubmit={(e) => {
-        e.preventDefault()
-        addItem.mutate({name: newItem, index: newIndex})
+        e.preventDefault();
+        addItem.mutate({name: newItem, index: newIndex});
       }}>
         <input className="border border-solid rounded-md bg-black/30 border-white/30 text-white w-full px-3 py-2"
                required
                value={newItem}
                onChange={(e) => setNewItem(e.target.value)}/>
       </form>
-      {items.map((item: Item) => <Item key={item.id} item={item}/>)}
+      {items.map((item: Item) => <Item key={item.id} item={item} listId={listId}/>)}
     </div>
   );
-}
+};
 
 const List = ({}) => {
-  const {listId} = usePathParams<{ listId: string }>();
+  const {listId} = usePathParams<{listId: string}>();
   const {data, isPending, error} = useItems(listId);
   const {logout} = useAuth();
 
@@ -79,9 +85,9 @@ const List = ({}) => {
       </div>
       {isPending && "Loading..."}
       {!!error && "Could not fetch items."}
-      {!!data && <Items items={data} listId={listId} />}
+      {!!data && <Items items={data} listId={listId}/>}
     </div>
   );
-}
+};
 
 export default List;

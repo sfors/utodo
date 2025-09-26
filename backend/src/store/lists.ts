@@ -1,14 +1,7 @@
 import {v7 as uuidv7} from "uuid";
 import sql from "./db.js";
 import type {Row} from "postgres";
-
-interface List {
-  id: string;
-  ownerId: string;
-  ownerName: string;
-  name: string;
-  frozen: boolean;
-}
+import type {List} from "../model.js";
 
 function mapList(row: Row): List {
   return {

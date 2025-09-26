@@ -1,4 +1,4 @@
-import express, {Router} from 'express';
+import express, {Router} from "express";
 import lists from "./../store/lists.js";
 import {requireAuth} from "../auth/middleware.js";
 import items from "../store/items.js";
@@ -19,7 +19,7 @@ router.post("", async (req, res) => {
   const {name} = req.body;
   const result = await lists.addList({name: name, ownerId: userId});
   res.json(result);
-})
+});
 
 router.get("/:listId/items", async (req, res) => {
   const listId = req.params.listId;
@@ -32,6 +32,6 @@ router.post("/:listId/items", async (req, res) => {
   const {name, index, id} = req.body;
   const result = await items.addItem({listId, name, index, id});
   res.json(result);
-})
+});
 
 export default router;

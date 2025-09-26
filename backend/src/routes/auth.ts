@@ -1,4 +1,4 @@
-import express, {Router} from 'express';
+import express, {Router} from "express";
 import users from "./../store/users.js";
 import jwt from "./../auth/jwt.js";
 
@@ -18,7 +18,7 @@ router.post("/register", async (req, res) => {
 
   //TODO: create registration session in db
   res.status(200).json({message: "Verification code has been sent to your email address"});
-})
+});
 
 router.post("/login", async (req, res) => {
   const {email} = req.body;
@@ -52,6 +52,6 @@ router.post("/verify", async (req, res) => {
   const signedJwt = await jwt.sign({userId: user.id, email: user.email});
 
   res.status(200).json({user, token: signedJwt});
-})
+});
 
 export default router;
