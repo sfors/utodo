@@ -1,7 +1,8 @@
 import express, {Router} from "express";
 import {requireAuth} from "../auth/middleware.js";
-import type {UpdateItem, AddItem, Change} from "../model.js";
+import type {UpdateItem, AddItem, Change, UpdateList} from "../model.js";
 import items from "../store/items.js";
+import lists from "../store/lists.js";
 
 const router: Router = express.Router();
 
@@ -22,11 +23,22 @@ async function handleAddItem(userId: string, {listId, name, index, itemId}: AddI
   return items.addItem({listId, name, index, id: itemId});
 }
 
+async function handleUpdateList(userId: string, change: UpdateList) {
+  if (["name", "frozen"].includes(change.key)) {
+    //TODO: check access with userId and listId
+    return lists.updateList(change);
+  } else {
+    throw new Error("Invalid key");
+  }
+}
+
 async function handleChange(userId: string, change: Change) {
   if (change.type === "updateItem") {
     return handleUpdateItem(userId, change as UpdateItem);
   } else if (change.type === "addItem") {
     return handleAddItem(userId, change as AddItem);
+  } else if (change.type === "updateList") {
+    return handleUpdateList(userId, change as UpdateList);
   } else {
     throw new Error("No change type");
   }

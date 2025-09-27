@@ -1,10 +1,18 @@
 import {useMutation, useQuery, useQueryClient} from "@tanstack/react-query";
 import {get, post} from "./api.ts";
-import type {List, Item} from "../model.ts";
+import type {Item, List} from "../model.ts";
 import {v7 as uuidv7} from "uuid";
+
+async function getList(listId: string) {
+  return get<List>(`/api/lists/${listId}`);
+}
 
 async function getLists() {
   return get<List[]>("/api/lists");
+}
+
+async function createNewList() {
+  return post<List>("/api/lists", {body: {}});
 }
 
 async function getItem(listId: string, itemId: string) {
@@ -17,13 +25,27 @@ async function getItems(listId: string) {
 
 async function addItem({name, index, listId}: {name: string, index: number, listId: string}) {
   const id = uuidv7();
-  return post<Item>(`/api/lists/${listId}/items`, {body: {id, index, name}})
+  return post<Item>(`/api/lists/${listId}/items`, {body: {id, index, name}});
+}
+
+export function useList(listId: string) {
+  return useQuery({
+    queryKey: ["list", listId],
+    queryFn: () => getList(listId)
+  });
 }
 
 export function useLists() {
   return useQuery({
     queryKey: ["lists"],
     queryFn: getLists
+  });
+}
+
+export function useCreateNewList({onSuccess}: {onSuccess: (list: List) => void}) {
+  return useMutation({
+    mutationFn: createNewList,
+    onSuccess: (list: List) => onSuccess(list)
   });
 }
 
@@ -42,7 +64,7 @@ export function useItem(listId: string, itemId: string, listIsFetching: boolean)
           } else {
             return i;
           }
-        })
+        });
       });
       return item;
     }
@@ -56,7 +78,7 @@ export function useItems(listId: string) {
     queryFn: async () => {
       const result = await getItems(listId);
       result.forEach((item) => {
-        queryClient.setQueryData(["item", listId, item.id], item)
+        queryClient.setQueryData(["item", listId, item.id], item);
       });
       return result;
     }
@@ -69,7 +91,7 @@ export function useAddItem(listId: string, onSuccess: () => void) {
     mutationFn: (item: {name: string, index: number}) => addItem({...item, listId}),
     onSuccess: async () => {
       onSuccess();
-      await queryClient.invalidateQueries({ queryKey: ["listItems", listId] })
+      await queryClient.invalidateQueries({queryKey: ["listItems", listId]});
     }
-  })
+  });
 }

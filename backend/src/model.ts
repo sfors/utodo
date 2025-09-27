@@ -20,12 +20,12 @@ export interface Item {
   parentId: string | null;
   typeId: string | null;
   description: string | null;
-  name: string | null;
+  name: string;
   done: boolean;
   customFields: any;
 }
 
-type ChangeType = "updateItem" | "addItem";
+type ChangeType = "updateItem" | "addItem" | "updateList";
 
 export interface Change {
   id: string;
@@ -34,12 +34,12 @@ export interface Change {
 
 export type ItemKey = keyof Omit<Item, "id" | "customFields" | "typeId">;
 
-export interface UpdateItem extends Change{
+export interface UpdateItem extends Change {
   type: "updateItem";
   listId: string;
   itemId: string;
   key: ItemKey;
-  value: any
+  value: any;
 }
 
 export interface AddItem extends Change {
@@ -49,4 +49,13 @@ export interface AddItem extends Change {
   name: string;
   index: number;
   parentId?: string;
+}
+
+export type ListKey = "name" | "frozen";
+
+export interface UpdateList extends Change {
+  type: "updateList";
+  listId: string;
+  key: ListKey;
+  value: any;
 }

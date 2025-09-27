@@ -21,6 +21,13 @@ router.post("", async (req, res) => {
   res.json(result);
 });
 
+router.get("/:listId", async (req, res) => {
+  const userId = req.identity as string;
+  const listId = req.params.listId;
+  const result = await lists.getList(userId, listId);
+  res.json(result);
+});
+
 router.get("/:listId/items", async (req, res) => {
   const listId = req.params.listId;
   const result = await items.getItems(listId);

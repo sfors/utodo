@@ -4,10 +4,14 @@ import {useState} from "react";
 import Link from "../router/Link.tsx";
 import {useAuth} from "../AuthContext.tsx";
 import {navigateTo} from "../router/util.tsx";
+import {useCreateNewList} from "../api/lists.tsx";
 
 const NewList = ({}) => {
+  const createNewList = useCreateNewList({onSuccess: (list: List) => navigateTo(`/list/${list.id}`)});
   return (
-    <div className="cursor-pointer flex flex-col drop-shadow-sm rounded-3xl bg-indigo-950 p-3">
+    <div className="cursor-pointer flex flex-col drop-shadow-sm rounded-3xl bg-indigo-950 p-3"
+         onClick={() => {createNewList.mutate()}}
+    >
       <div
         className="h-32 flex flex-col items-center justify-center drop-shadow-sm rounded-xl w-full bg-indigo-100 hover:bg-indigo-200 transition-colors duration-200 p-6">
         <span className="text-5xl">+</span>

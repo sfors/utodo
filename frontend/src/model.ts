@@ -20,7 +20,7 @@ export interface Item {
   parentId: string | null;
   typeId: string | null;
   description: string | null;
-  name: string | null;
+  name: string;
   done: boolean;
   customFields: any;
 }
