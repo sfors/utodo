@@ -1,4 +1,4 @@
-import {useAddItem, useItems} from "../api/lists.tsx";
+import {useAddItem, useItem, useItems} from "../api/lists.tsx";
 import type {Item} from "../model.ts";
 import Link from "../router/Link.tsx";
 import {useAuth} from "../AuthContext.tsx";
@@ -8,9 +8,29 @@ import {Check, ChevronDown, ChevronRight, Plus} from "lucide-react";
 import {useState} from "react";
 import {useUpdateItem} from "../api/changes.tsx";
 
-const Item = ({item, listId}: {item: Item, listId: string}) => {
+const DoneCheckbox = ({item}: {item: Item}) => {
+  const updateItem = useUpdateItem({listId: item.listId, itemId: item.id});
+  return (
+    <Checkbox.Root
+      className="cursor-pointer bg-black/30 hover:bg-black/50 w-6 h-6 rounded-sm flex items-center justify-center"
+      checked={item.done}
+      onCheckedChange={(checked) => {
+        updateItem.mutate({key: "done", value: checked});
+      }}
+      id="c1">
+      <Checkbox.Indicator className="text-white">
+        <Check size={18}/>
+      </Checkbox.Indicator>
+    </Checkbox.Root>
+  );
+};
+
+const Item = ({listId, itemId, listIsFetching}: {listId: string, itemId: string, listIsFetching: boolean}) => {
+  const {data: item} = useItem(listId, itemId, listIsFetching);
   const [open, setOpen] = useState(false);
-  const updateItem = useUpdateItem({listId, itemId: item.id});
+  if (!item) {
+    return null;
+  }
   return (
     <div className="bg-white/8 rounded-md border border-white/20 p-2">
       <div className="flex flex-row justify-between items-center">
@@ -20,18 +40,7 @@ const Item = ({item, listId}: {item: Item, listId: string}) => {
                   onClick={() => setOpen(!open)}>
             {open ? <ChevronDown/> : <ChevronRight/>}
           </button>
-          <Checkbox.Root
-            className="cursor-pointer bg-black/30 hover:bg-black/50 w-6 h-6 rounded-sm flex items-center justify-center"
-            checked={item.done}
-            onCheckedChange={(checked) => {
-              console.log(checked);
-              updateItem.mutate({key: "done", value: checked});
-            }}
-            id="c1">
-            <Checkbox.Indicator className="text-white">
-              <Check size={18}/>
-            </Checkbox.Indicator>
-          </Checkbox.Root>
+          <DoneCheckbox item={item} />
           <p className="pl-1">{item.name}</p></div>
         <div className="flex items-center">
           <button className="rounded-sm cursor-pointer hover:bg-black/20 transition-colors" title="Add sub item"><Plus/>
@@ -48,7 +57,7 @@ const Item = ({item, listId}: {item: Item, listId: string}) => {
   );
 };
 
-const Items = ({items, listId}: {items: Item[], listId: string}) => {
+const Items = ({items, listId, listIsFetching}: {items: Item[], listId: string, listIsFetching: boolean}) => {
   const [newItem, setNewItem] = useState<string>("");
   const newIndex = items.length > 0 ? items[0].index - 1000 : 0;
   const addItem = useAddItem(listId, () => setNewItem(""));
@@ -64,14 +73,14 @@ const Items = ({items, listId}: {items: Item[], listId: string}) => {
                value={newItem}
                onChange={(e) => setNewItem(e.target.value)}/>
       </form>
-      {items.map((item: Item) => <Item key={item.id} item={item} listId={listId}/>)}
+      {items.map((item: Item) => <Item key={item.id} listId={listId} itemId={item.id} listIsFetching={listIsFetching}/>)}
     </div>
   );
 };
 
 const List = ({}) => {
   const {listId} = usePathParams<{listId: string}>();
-  const {data, isPending, error} = useItems(listId);
+  const {data, isPending, error, isFetching} = useItems(listId);
   const {logout} = useAuth();
 
   return (
@@ -85,7 +94,7 @@ const List = ({}) => {
       </div>
       {isPending && "Loading..."}
       {!!error && "Could not fetch items."}
-      {!!data && <Items items={data} listId={listId}/>}
+      {!!data && <Items items={data} listId={listId} listIsFetching={isFetching} />}
     </div>
   );
 };

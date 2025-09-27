@@ -15,6 +15,7 @@ export interface List {
 
 export interface Item {
   id: string;
+  listId: string;
   index: number;
   parentId: string | null;
   typeId: string | null;

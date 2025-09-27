@@ -1,11 +1,12 @@
 import {v7 as uuidv7} from "uuid";
 import sql from "./db.js";
 import type {Row} from "postgres";
-import type {Item, ItemKey, UpdateItem} from "../model.js";
+import type {Item, UpdateItem} from "../model.js";
 
 function mapItem(row: Row): Item {
   return {
     id: row.id,
+    listId: row.list_id,
     index: row.index,
     parentId: row.parent_id,
     typeId: row.type_id,
@@ -13,6 +14,20 @@ function mapItem(row: Row): Item {
     name: row.name,
     done: row.done,
     customFields: row.custom_fields
+  }
+}
+
+async function getItem(listId: string, itemId: string) {
+  const result = await sql`
+      select *
+      from items
+      where id = ${itemId} and list_id = ${listId}
+  `;
+
+  if (result.length > 0 && result[0]) {
+    return mapItem(result[0]);
+  } else {
+    throw new Error("Could find item");
   }
 }
 
@@ -65,6 +80,7 @@ async function updateItem(update: UpdateItem) {
 }
 
 export default {
+  getItem,
   getItems,
   addItem,
   updateItem
