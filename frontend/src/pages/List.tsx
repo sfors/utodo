@@ -8,6 +8,7 @@ import {useEffect, useRef, useState} from "react";
 import {useUpdateItem, useUpdateList} from "../api/changes.tsx";
 import Checkbox from "../components/Checkbox.tsx";
 import Button from "../components/Button.tsx";
+import {useSubscription} from "../websocket/WebSocketContext.tsx";
 
 const DoneCheckbox = ({item}: {item: Item}) => {
   const updateItem = useUpdateItem({listId: item.listId, itemId: item.id});
@@ -97,9 +98,8 @@ const Item = ({listId, itemId, listIsFetching}: {
           </button>
           <DoneCheckbox item={item}/>
           <ItemName item={item}/>
-        </div>
-        <div className="flex items-center">
-          <button className="rounded-sm cursor-pointer hover:bg-black/20 transition-colors" title="Add sub item"><Plus/>
+          <button className="rounded-sm cursor-pointer hover:bg-black/20 transition-colors" title="Add sub item">
+            <Plus/>
           </button>
         </div>
       </div>
@@ -204,12 +204,13 @@ const ListHeader = ({list, showDone, setShowDone}: {
   );
 };
 
-const List = () => {
+const ListPage = () => {
   const {listId} = usePathParams<{listId: string}>();
   const {data: list} = useList(listId);
   const {data: items, isPending, error, isFetching} = useItems(listId);
   const {logout} = useAuth();
   const [showDone, setShowDone] = useState(true);
+  useSubscription(`list-${listId}`);
 
   return (
     <div className="max-w-7xl mx-auto flex flex-col mt-2 text-white">
@@ -233,4 +234,4 @@ const List = () => {
   );
 };
 
-export default List;
+export default ListPage;

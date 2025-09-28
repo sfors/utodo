@@ -8,8 +8,12 @@ export default defineConfig({
     host: "::",
     port: 5173,
     proxy: {
-      "/api": 'http://localhost:3001',
+      "/api/websocket": {
+        target: "ws://localhost:3001",
+        ws: true
+      },
+      "/api": "http://localhost:3001"
     }
   },
-  plugins: [react(), tailwindcss()],
-})
+  plugins: [react(), tailwindcss()]
+});

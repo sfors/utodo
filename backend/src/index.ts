@@ -1,5 +1,4 @@
 import express from "express";
-import {WebSocketServer} from "ws";
 import http from "http";
 import itemRoutes from "./routes/items.js";
 import listRoutes from "./routes/lists.js";
@@ -7,23 +6,13 @@ import userRoutes from "./routes/users.js";
 import authRoutes from "./routes/auth.js";
 import changeRoutes from "./routes/changes.js";
 import {authenticate} from "./auth/middleware.js";
+import {initializeWebSocketServer} from "./websocket/webSocketHandler.js";
 
 const port = 3001;
 const app = express();
 const server = http.createServer(app);
-const wss = new WebSocketServer({server, path: "/websocket"});
 
-wss.on("connection", (ws, request) => {
-  console.log(`Connection ${JSON.stringify(request, null, 2)}`);
-
-  ws.on("error", console.error);
-
-  ws.on("message", (data) => {
-    console.log("received: %s", data);
-  });
-
-  ws.send("something");
-});
+const webSocketHandler = initializeWebSocketServer(server);
 
 app.use(authenticate);
 
@@ -43,3 +32,22 @@ server.on("error", (err) => {
 server.on("listening", () => {
   console.log("Listening on port " + port);
 });
+
+function shutdown() {
+  const forceShutdownTimeout = setTimeout(() => {
+    console.log("Shutdown timeout reached, forcing exit.");
+    process.exit(1);
+  }, 30000);
+
+  webSocketHandler.close(() => {
+    console.log("WebSocketServer closed. Shutting down server...");
+    server.close(() => {
+      clearTimeout(forceShutdownTimeout);
+      console.log("Server closed gracefully.");
+      process.exit(0);
+    });
+  });
+}
+
+process.on("SIGTERM", shutdown);
+process.on("SIGINT", shutdown);

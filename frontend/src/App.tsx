@@ -7,27 +7,40 @@ import RouteProvider from "./router/RouteProvider.tsx";
 import NotFound from "./pages/NotFound.tsx";
 import RequireAuth from "./RequireAuth.tsx";
 import Profile from "./pages/Profile.tsx";
-import List from "./pages/List.tsx";
+import ListPage from "./pages/List.tsx";
+import createSocketHandler from "./websocket/websocket.ts";
+import {WebSocketProvider} from "./websocket/WebSocketContext.tsx";
 
-const queryClient = new QueryClient()
+// const subscriptions: string[] = [];
+
+// const subscriptionHandler = {
+//   subscribe: (channel: string) => subscriptions.push(channel),
+//   getSubscriptions: () => subscriptions
+// }
+
+const websocketHandler = createSocketHandler();
+
+const queryClient = new QueryClient();
 
 function App() {
   const routes = {
     default: <NotFound/>,
     "/": <RequireAuth><Overview/></RequireAuth>,
     "/profile": <RequireAuth><Profile/></RequireAuth>,
-    "/list/:listId": <RequireAuth><List /></RequireAuth>,
+    "/list/:listId": <RequireAuth><ListPage/></RequireAuth>,
     "/login": <Login/>
-  }
+  };
   return (
     <div className="bg-linear-to-br font-mono from-indigo-900 to-indigo-950 min-h-screen p-2">
       <QueryClientProvider client={queryClient}>
-        <AuthProvider>
-          <RouteProvider {...routes}/>
-        </AuthProvider>
+          <WebSocketProvider webSocketHandler={websocketHandler} queryClient={queryClient}>
+            <AuthProvider>
+              <RouteProvider {...routes}/>
+            </AuthProvider>
+          </WebSocketProvider>
       </QueryClientProvider>
     </div>
-  )
+  );
 }
 
-export default App
+export default App;

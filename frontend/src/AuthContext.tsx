@@ -1,5 +1,6 @@
 import React, {createContext, useContext, useEffect, useState} from "react";
 import type {User} from "./model.ts";
+import {type IWebSocketContext, useWebSocket} from "./websocket/WebSocketContext.tsx";
 
 interface AuthState {
   user: User | null;
@@ -26,17 +27,20 @@ export const useAuth = () => {
   return context;
 };
 
-export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({children}) => {
+export const AuthProvider: React.FC<{children: React.ReactNode}> = ({children}) => {
   const [state, setState] = useState<AuthState>({
     user: null, isAuthenticated: false, token: null
   });
 
   const [isLoading, setIsLoading] = useState(true);
 
+  const webSocketCtx: IWebSocketContext = useWebSocket();
+
   function login(user: User, token: string) {
     localStorage.setItem("user", JSON.stringify(user));
     localStorage.setItem("token", token);
     setState({...state, user, token, isAuthenticated: true});
+    webSocketCtx.connect();
   }
 
   function updateUser(user: User) {
@@ -48,6 +52,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({children}
     localStorage.removeItem("user");
     localStorage.removeItem("token");
     setState({...state, user: null, token: null, isAuthenticated: false});
+    webSocketCtx.disconnect();
   }
 
   useEffect(() => {
@@ -63,7 +68,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({children}
       }
     }
     setIsLoading(false);
-  }, [])
+  }, []);
 
   const value: IAuthContext = {
     user: state.user,
@@ -72,11 +77,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({children}
     login,
     updateUser,
     logout
-  }
+  };
 
   return (
     <AuthContext value={value}>
       {children}
     </AuthContext>
   );
-}
+};
