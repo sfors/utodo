@@ -38,6 +38,32 @@ export function useUpdateItem({listId, itemId, onSuccess}: {listId: string, item
   });
 }
 
+async function addItem(update: {listId: string, name: string, index: number, parentId?: string}) {
+  const id = uuidv7();
+  const itemId = uuidv7();
+  const body = {
+    id,
+    type: "addItem",
+    listId: update.listId,
+    itemId,
+    name: update.name,
+    index: update.index,
+    parentId: update.parentId
+  };
+  return post<Item>(`/api/changes`, {body});
+}
+
+export function useAddItem(listId: string, onSuccess: () => void) {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (item: {name: string, index: number}) => addItem({...item, listId}),
+    onSuccess: async () => {
+      onSuccess();
+      await queryClient.invalidateQueries({queryKey: ["listItems", listId]});
+    }
+  });
+}
+
 async function updateList(update: {listId: string, key: string, value: any}) {
   const id = uuidv7();
   const body = {

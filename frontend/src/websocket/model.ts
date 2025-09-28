@@ -12,6 +12,12 @@ export interface ItemUpdated {
   itemId: string;
 }
 
+export interface ItemAdded {
+  type: "itemAdded";
+  listId: string;
+  itemId: string | null;
+}
+
 export interface ListUpdated {
   type: "listUpdated";
   listId: string;
@@ -26,7 +32,7 @@ export interface ConfirmAuthentication {
   type: "confirmAuthentication";
 }
 
-export type ServerMessage = ItemUpdated | ListUpdated | ConfirmSubscription | ConfirmAuthentication | Ping | Pong;
+export type ServerMessage = ItemUpdated | ItemAdded | ListUpdated | ConfirmSubscription | ConfirmAuthentication | Ping | Pong;
 
 export interface Authenticate {
   type: "auth",

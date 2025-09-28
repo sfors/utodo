@@ -41,11 +41,4 @@ router.get("/:listId/items/:itemId", async (req, res) => {
   res.json(result);
 });
 
-router.post("/:listId/items", async (req, res) => {
-  const listId = req.params.listId;
-  const {name, index, id} = req.body;
-  const result = await items.addItem({listId, name, index, id});
-  res.json(result);
-});
-
 export default router;

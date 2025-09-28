@@ -15,7 +15,7 @@ type ChannelId = string;
 
 const connections = new Map<ConnectionId, Connection>();
 const channelSubscriptions = new Map<ChannelId, Set<ConnectionId>>;
-let cleanupTimeout: NodeJS.Timeout | undefined = undefined
+let cleanupTimeout: NodeJS.Timeout | undefined = undefined;
 
 function send(connectionId: ConnectionId, message: ServerMessage) {
   const connection = connections.get(connectionId);
@@ -31,7 +31,7 @@ function subscribe(channel: ChannelId, connectionId: ConnectionId) {
   } else {
     channelSubscriptions.set(channel, new Set([connectionId]));
   }
-  console.log(`Connection ${connectionId} subscribed to ${channel}`)
+  console.log(`Connection ${connectionId} subscribed to ${channel}`);
 }
 
 function unsubscribe(channel: ChannelId, connectionId: ConnectionId) {
@@ -39,7 +39,7 @@ function unsubscribe(channel: ChannelId, connectionId: ConnectionId) {
   if (subscription) {
     subscription.delete(connectionId);
   }
-  console.log(`Connection ${connectionId} unsubscribed from ${channel}`)
+  console.log(`Connection ${connectionId} unsubscribed from ${channel}`);
   scheduleSubscriptionCleanup();
 }
 
@@ -95,7 +95,7 @@ function handleMessage(connectionId: string, message: ClientMessage) {
   }
 }
 
-export function handleConnection(ws: WebSocket, request: IncomingMessage) {
+function handleConnection(ws: WebSocket, request: IncomingMessage) {
   console.log(`WebSocket connection established: ${request.url}`);
 
   const connectionId = uuidv7();
@@ -121,6 +121,15 @@ export function handleConnection(ws: WebSocket, request: IncomingMessage) {
       console.error("WebSocket failed to parse message", e);
     }
   });
+}
+
+export function notifySubscribers(channelId: ChannelId, message: ServerMessage) {
+  const subscribers = channelSubscriptions.get(channelId);
+  if (subscribers) {
+    subscribers.forEach((connectionId: ConnectionId) => {
+      send(connectionId, message);
+    });
+  }
 }
 
 export function initializeWebSocketServer(server: Server) {
