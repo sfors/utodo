@@ -76,13 +76,12 @@ async function updateList(update: {listId: string, key: string, value: any}) {
   return post<List>(`/api/changes`, {body});
 }
 
-export function useUpdateList({listId, onSuccess}: {listId: string, onSuccess: () => void}) {
+export function useUpdateList({listId}: {listId: string}) {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: (update: {key: string, value: any}) => updateList({...update, listId}),
     onSuccess: async (newList) => {
       queryClient.setQueryData(["list", listId], newList);
-      onSuccess();
     }
   });
 }

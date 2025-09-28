@@ -5,7 +5,7 @@ import {useAuth} from "../AuthContext.tsx";
 import {usePathParams} from "../router/RouteProvider.tsx";
 import {ChevronDown, ChevronRight, Plus} from "lucide-react";
 import {useEffect, useRef, useState} from "react";
-import {useUpdateItem, useAddItem, useUpdateList} from "../api/changes.tsx";
+import {useAddItem, useUpdateItem, useUpdateList} from "../api/changes.tsx";
 import Checkbox from "../components/Checkbox.tsx";
 import Button from "../components/Button.tsx";
 import {useSubscription} from "../websocket/WebSocketContext.tsx";
@@ -24,36 +24,30 @@ const DoneCheckbox = ({item}: {item: Item}) => {
 const ItemNameForm = ({item, onComplete}: {item: Item, onComplete: () => void}) => {
   const [newName, setNewName] = useState(item.name);
   const inputRef = useRef<HTMLInputElement>(null);
-  const updateItem = useUpdateItem({
-    listId: item.listId,
-    itemId: item.id,
-    onSuccess: () => onComplete()
-  });
+  const updateItem = useUpdateItem({listId: item.listId, itemId: item.id});
 
   useEffect(() => {
     inputRef.current?.focus();
   }, []);
 
-  function submit() {
-    if (newName !== item.name) {
-      updateItem.mutate({key: "name", value: newName});
-    } else {
-      onComplete();
-    }
-  }
+  useEffect(() => {
+    updateItem.mutate({key: "name", value: newName});
+  }, [newName])
 
   return (
     <form className="w-full" onSubmit={(e) => {
       e.preventDefault();
-      submit();
+      onComplete();
     }}>
       <input className="border border-solid rounded-md bg-black/30 border-white/30 text-white w-full px-2 py-1"
              ref={inputRef}
-             onBlur={() => submit()}
+             onBlur={() => onComplete()}
              required
              value={newName}
              placeholder={item.name}
-             onChange={(e) => setNewName(e.target.value)}/>
+             onChange={(e) => {
+               setNewName(e.target.value);
+             }}/>
     </form>
   );
 };
@@ -146,32 +140,27 @@ const Items = ({items, listId, listIsFetching, showDone}: {
 const ListNameForm = ({list, onComplete}: {list: List, onComplete: () => void}) => {
   const [newName, setNewName] = useState(list.name);
   const inputRef = useRef<HTMLInputElement>(null);
-  const updateList = useUpdateList({listId: list.id, onSuccess: () => onComplete()});
+  const updateList = useUpdateList({listId: list.id});
 
   useEffect(() => {
     inputRef.current?.focus();
   }, []);
 
-  function submit() {
-    if (newName !== list.name) {
-      updateList.mutate({key: "name", value: newName});
-    } else {
-      onComplete();
-    }
-  }
-
   return (
     <form className="w-full" onSubmit={(e) => {
       e.preventDefault();
-      submit();
+      onComplete();
     }}>
       <input className="border border-solid rounded-md bg-black/30 border-white/30 text-white w-full p-2"
              ref={inputRef}
-             onBlur={() => submit()}
+             onBlur={() => onComplete()}
              required
              value={newName}
              placeholder={list.name}
-             onChange={(e) => setNewName(e.target.value)}/>
+             onChange={(e) => {
+               setNewName(e.target.value);
+               updateList.mutate({key: "name", value: e.target.value});
+             }}/>
     </form>
   );
 };
