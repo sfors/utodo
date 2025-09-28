@@ -115,7 +115,7 @@ function handleConnection(ws: WebSocket, request: IncomingMessage) {
   ws.on("message", (rawData) => {
     try {
       const data: ClientMessage = JSON.parse(rawData.toString());
-      console.log("WebSocket received message: ", data);
+      console.log("WebSocket received message:", data.type);
       handleMessage(connectionId, data);
     } catch (e) {
       console.error("WebSocket failed to parse message", e);

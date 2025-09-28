@@ -5,10 +5,11 @@ import listRoutes from "./routes/lists.js";
 import userRoutes from "./routes/users.js";
 import authRoutes from "./routes/auth.js";
 import changeRoutes from "./routes/changes.js";
+import healthRoutes from "./routes/health.js";
 import {authenticate} from "./auth/middleware.js";
 import {initializeWebSocketServer} from "./websocket/webSocketHandler.js";
 
-const port = 3001;
+const port = process.env.PORT || 3001;
 const app = express();
 const server = http.createServer(app);
 
@@ -21,6 +22,7 @@ app.use("/api/lists", listRoutes);
 app.use("/api/changes", changeRoutes);
 app.use("/api/users", userRoutes);
 app.use("/api/auth", authRoutes);
+app.use("/health", healthRoutes);
 
 server.listen(port);
 

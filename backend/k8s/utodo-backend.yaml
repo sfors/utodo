@@ -1,0 +1,98 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: utodo-backend
+  namespace: utodo
+  labels:
+    app: utodo-backend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: utodo-backend
+  strategy:
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        app: utodo-backend
+    spec:
+      containers:
+        - name: utodo-backend
+          image: ghcr.io/svenskkod-io/utodo-backend:BUILD_VERSION
+          ports:
+            - containerPort: 8080
+          env:
+            - name: PORT
+              value: "8080"
+            - name: PGHOST
+              valueFrom:
+                secretKeyRef:
+                  name: utodo-secrets
+                  key: postgres-host
+            - name: PGPORT
+              valueFrom:
+                secretKeyRef:
+                  name: utodo-secrets
+                  key: postgres-port
+            - name: PGDATABASE
+              valueFrom:
+                secretKeyRef:
+                  name: utodo-secrets
+                  key: postgres-database
+            - name: PGUSER
+              valueFrom:
+                secretKeyRef:
+                  name: utodo-secrets
+                  key: postgres-user
+            - name: PGPASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: utodo-secrets
+                  key: postgres-user
+            - name: JWT_PRIVATE_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: utodo-secrets
+                  key: jwt-private-key
+            - name: JWT_PUBLIC_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: utodo-secrets
+                  key: jwt-public-key
+          resources:
+            requests:
+              memory: "128Mi"
+              cpu: "50m"
+            limits:
+              memory: "128Mi"
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 8080
+            initialDelaySeconds: 60
+            periodSeconds: 10
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 8080
+            initialDelaySeconds: 5
+            periodSeconds: 5
+      imagePullSecrets:
+        - name: github-package-registry
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: utodo-backend-service
+  namespace: utodo
+  labels:
+    app: utodo-backend
+spec:
+  ports:
+    - name: http
+      port: 80
+      targetPort: 8080
+  selector:
+    app: utodo-backend
+
