@@ -1,4 +1,4 @@
-name: "CI"
+name: "Backend CI"
 run-name: Deploy ${{ github.run_number}} of ${{ github.repository }}, started by ${{ github.actor }}
 on:
   workflow_dispatch:

@@ -49,7 +49,7 @@ spec:
               valueFrom:
                 secretKeyRef:
                   name: utodo-secrets
-                  key: postgres-user
+                  key: postgres-password
             - name: JWT_PRIVATE_KEY
               valueFrom:
                 secretKeyRef:
