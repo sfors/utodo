@@ -14,6 +14,7 @@ RUN pnpm run build
 FROM nginx AS run
 
 COPY --from=build /build/dist /usr/share/nginx/html
+COPY nginx.conf /etc/nginx/nginx.conf
 
 # Expose port
 EXPOSE 80
