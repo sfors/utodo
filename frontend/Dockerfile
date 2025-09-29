@@ -7,7 +7,6 @@ RUN pnpm install --frozen-lockfile
 
 # Copy source files
 COPY vite.config.ts tsconfig.json tsconfig.app.json tsconfig.node.json /build/
-COPY public/ /build/public/
 COPY index.html /build/
 COPY src/ /build/src/
 RUN pnpm run build
