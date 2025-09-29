@@ -1,0 +1,54 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: utodo-frontend
+  namespace: utodo
+  labels:
+    app: utodo-frontend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: utodo-frontend
+  strategy:
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        app: utodo-frontend
+    spec:
+      containers:
+        - name: utodo-frontend
+          image: ghcr.io/svenskkod-io/utodo-frontend:BUILD_VERSION
+          ports:
+            - containerPort: 80
+          livenessProbe:
+            httpGet:
+              path: /index.html
+              port: 80
+            initialDelaySeconds: 10
+            periodSeconds: 10
+          readinessProbe:
+            httpGet:
+              path: /index.html
+              port: 80
+            initialDelaySeconds: 5
+            periodSeconds: 5
+      imagePullSecrets:
+        - name: github-package-registry
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: utodo-frontend-service
+  namespace: utodo
+  labels:
+    app: utodo-frontend
+spec:
+  ports:
+    - name: http
+      port: 80
+      targetPort: 80
+  selector:
+    app: utodo-frontend
+
