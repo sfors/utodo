@@ -23,14 +23,8 @@ router.post("/register", async (req, res) => {
 router.post("/login", async (req, res) => {
   const {email} = req.body;
 
-  const user = await users.getUserByEmail(email);
-
-  if (!user) {
-    res.status(401).json({error: "User not found"});
-  } else {
-    //TODO: send verification code and create login session
-    res.status(200).json({message: "Verification code has been sent to your email address"});
-  }
+  //TODO: send verification code and create login session
+  res.status(200).json({message: "Verification code has been sent to your email address"});
 });
 
 router.post("/verify", async (req, res) => {
