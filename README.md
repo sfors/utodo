@@ -1,13 +1,43 @@
 # TODO List application
 
+Application: https://utodo.svenskkod.io  
+Repository: https://github.com/svenskkod-io/utodo
+
 ## Technical requirements
 - Language: TypeScript
 - Framework: React
 - Backend: Node
 
+### Frontend stack
+
+- TypeScript
+- React
+- Vite - build tools
+- Tanstack query - handling client-server interactions (excluding websockets) and some state management
+- Tailwind CSS - utility css classes
+- uuid - uuid library
+
+### Backend stack
+
+- TypeScript
+- Node
+- Express - framework for building apis
+- jose - library for creating/signing/verifying JWTs
+- postgres - postgres client for Node
+- ws - WebSocket server for Node
+- uuid - uuid library
+
+### Other
+
+**Postgres** database for persistence. The database is hosted on DigitalOcean.  
+**Kubernetes** cluster hosted on DigitalOcean for running both frontend and backend as Docker containers.  
+**GitHub Actions** for building Docker images and deploying to Kubernetes. Workflows are triggered on commits to master
+branch.  
+**Authentication** using JWT signed with EdDSA/Ed25519  
+
 ## User Stories
 
-### Will be quick to implement
+### I am going for these (marked are completed):
 - [x] I as a user can create to-do items, such as a grocery list.
 - [x] I as a user can mark to-do items as "done" - so that I can avoid clutter and focus on things that are still pending.
 - [x] I as a user can filter the to-do list and view items that were marked as done - so that I can retrospect on my prior progress.
@@ -20,7 +50,10 @@
 - [ ] I as a user can change the order of tasks via drag & drop
 - [ ] I as a user can move/convert subtasks to tasks via drag & drop
 - [ ] I as an owner/creator of a certain to-do list can freeze/unfreeze a to-do list I've created to avoid other users from mutating it
----  
+- [ ] I as a user can keep editing the list even when I lose internet connection, and can expect it to sync up with BE as I regain connection
+- [ ] I as a user can see the cursor and/or selection of another-user as he selects/types when he is editing text - so that we can discuss focused words during our online call.
+---
+### I am not going for these:
 - [ ] I as a user can specify cost/price for a task or a subtask - so that I can track my expenses / project cost.
 - [ ] I as a user can see the sum of the subtasks aggregated in the parent task - so that in my shopping list I can see what contributes to the overall sum.  
 For example I can have a task called "Salad", where I'd add all ingredients as sub-tasks, and would see how much a salad costs on my shopping list.
@@ -29,15 +62,5 @@ For example I can have a task called "Salad", where I'd add all ingredients as s
   - "food" that has fields:
     - required: "carbohydrate", "fat", "protein" (each specified in g/100g)
     - optional: "picture" a URL to an image used to render this item
-
-
-### Will require significant work
-- [ ] I as a user can keep editing the list even when I lose internet connection, and can expect it to sync up with BE as I regain connection
-- [ ] I as a user can see the cursor and/or selection of another-user as he selects/types when he is editing text - so that we can discuss focused words during our online call.
-
-
-## User stories that I will not attempt
-
 - [ ] I as a user can use my VR goggles to edit/browse multiple to-do lists in parallel in 3D space so that I can feel ultra-productive  
-*I will not be able to achieve this and the things above in the specified time, it would be fun though.*
-
+---

@@ -2,14 +2,13 @@
 
 - [x] Join/unjoin other user list
 - [ ] Add subtasks
-- [ ] Delete owned lists
+- [ ] Delete owned lists, unjoin list
 - [ ] See who is editing list with me
 - [ ] Drag and drop
 - [ ] Finish user handling (email, login-sessions)
 - [ ] LISTEN/NOTIFY via db to enable scaling
 - [ ] Freeze
 - [ ] Consolidate styling
-
 
 ## Initial thoughts
 
