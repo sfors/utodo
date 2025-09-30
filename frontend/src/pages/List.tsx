@@ -1,7 +1,7 @@
-import {useItem, useItems, useList} from "../api/lists.tsx";
+import {useItem, useItems, useJoinList, useList} from "../api/lists.tsx";
 import type {Item, List} from "../model.ts";
 import Link from "../router/Link.tsx";
-import {useAuth} from "../AuthContext.tsx";
+import {useAuth, useUser} from "../AuthContext.tsx";
 import {usePathParams} from "../router/RouteProvider.tsx";
 import {ChevronDown, ChevronRight, Plus} from "lucide-react";
 import {useEffect, useRef, useState} from "react";
@@ -200,6 +200,14 @@ const ListPage = () => {
   const {logout} = useAuth();
   const [showDone, setShowDone] = useState(true);
   useSubscription(`list-${listId}`);
+  const user = useUser();
+  const joinList = useJoinList(listId);
+
+  useEffect(() => {
+    if ((user?.id && list?.ownerId) && user.id !== list.ownerId) {
+      joinList.mutate();
+    }
+  }, [user?.id, listId, list?.ownerId]);
 
   return (
     <div className="max-w-7xl mx-auto flex flex-col mt-2 text-white">

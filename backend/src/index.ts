@@ -1,6 +1,5 @@
 import express from "express";
 import http from "http";
-import itemRoutes from "./routes/items.js";
 import listRoutes from "./routes/lists.js";
 import userRoutes from "./routes/users.js";
 import authRoutes from "./routes/auth.js";
@@ -17,7 +16,6 @@ const webSocketHandler = initializeWebSocketServer(server);
 
 app.use(authenticate);
 
-app.use("/api/items", itemRoutes);
 app.use("/api/lists", listRoutes);
 app.use("/api/changes", changeRoutes);
 app.use("/api/users", userRoutes);

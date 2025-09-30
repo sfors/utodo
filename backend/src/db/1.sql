@@ -20,9 +20,11 @@ create table lists (
 create table members (
     user_id uuid references users(id),
     list_id uuid references lists(id),
-    owner boolean not null default false,
     primary key (user_id, list_id)
 );
+
+create index idx_members_user_id on members(user_id);
+create index idx_members_list_id on members(list_id);
 
 create table items (
     id uuid primary key,

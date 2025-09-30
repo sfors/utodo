@@ -22,6 +22,10 @@ async function getItems(listId: string) {
   return get<Item[]>(`/api/lists/${listId}/items`);
 }
 
+async function joinList(listId: string) {
+  return post<{success: boolean}>(`/api/lists/${listId}/join`, {body: {}});
+}
+
 export function useList(listId: string) {
   return useQuery({
     queryKey: ["list", listId],
@@ -77,4 +81,10 @@ export function useItems(listId: string) {
       return result;
     }
   });
+}
+
+export function useJoinList(listId: string) {
+  return useMutation({
+    mutationFn: () => joinList(listId),
+  })
 }

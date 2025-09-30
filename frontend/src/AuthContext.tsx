@@ -27,6 +27,11 @@ export const useAuth = () => {
   return context;
 };
 
+export const useUser = () => {
+  const {user} = useAuth();
+  return user;
+};
+
 export const AuthProvider: React.FC<{children: React.ReactNode}> = ({children}) => {
   const [state, setState] = useState<AuthState>({
     user: null, isAuthenticated: false, token: null

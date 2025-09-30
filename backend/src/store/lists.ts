@@ -13,13 +13,24 @@ function mapList(row: Row): List {
   };
 }
 
-async function getList(userId: string, listId: string) {
+async function getOwnerId(listId: string) {
+  const result = await sql`select lists.owner_id
+                           from lists
+                           where lists.id = ${listId}`;
+
+  if (result.length > 0 && result[0]) {
+    return result[0].owner_id as string;
+  } else {
+    return null;
+  }
+}
+
+async function getList(listId: string) {
   const result = await sql`
       select lists.*, concat(users.first_name, ' ', users.last_name) as owner_name
       from lists
                join users on lists.owner_id = users.id
-      where lists.owner_id = ${userId}
-        and lists.id = ${listId}
+      where lists.id = ${listId}
   `;
 
   return result.map(mapList).find(() => true) || null;
@@ -30,7 +41,8 @@ async function getLists(userId: string) {
       select lists.*, concat(users.first_name, ' ', users.last_name) as owner_name
       from lists
                join users on lists.owner_id = users.id
-      where lists.owner_id = ${userId}
+               left outer join members on lists.id = members.list_id
+      where (lists.owner_id = ${userId} or members.user_id = ${userId})
       order by lists.id DESC
   `;
 
@@ -70,10 +82,33 @@ async function updateList(update: UpdateList) {
   }
 }
 
+async function isMember(listId: string, userId: string) {
+  const result = await sql`select * from members where list_id = ${listId} and user_id = ${userId}`;
+  return (result.length > 0 && result[0]) as boolean;
+}
+
+async function joinList(listId: string, userId: string) {
+  const isMemberAlready = await isMember(listId, userId);
+
+  if (isMemberAlready) {
+    return true;
+  }
+
+  const membership = {list_id: listId, user_id: userId};
+  const result = await sql`insert into members ${sql(membership)}`;
+  if (result.length > 0 && result[0]) {
+    return true;
+  } else {
+    throw new Error("Could not insert membership");
+  }
+}
+
 
 export default {
+  getOwnerId,
   getList,
   getLists,
   addList,
-  updateList
+  updateList,
+  joinList
 };
