@@ -14,14 +14,15 @@ function mapItem(row: Row): Item {
     name: row.name,
     done: row.done,
     customFields: row.custom_fields
-  }
+  };
 }
 
 async function getItem(listId: string, itemId: string) {
   const result = await sql`
       select *
       from items
-      where id = ${itemId} and list_id = ${listId}
+      where id = ${itemId}
+        and list_id = ${listId}
   `;
 
   if (result.length > 0 && result[0]) {
@@ -42,13 +43,20 @@ async function getItems(listId: string) {
   return result.map(item => mapItem(item));
 }
 
-async function addItem(item: {name: string, listId: string, index: number, id: string | undefined}) {
-  const {name, listId, index} = item;
+async function addItem(item: {
+  name: string,
+  listId: string,
+  index: number,
+  id: string | undefined,
+  parentId: string | undefined
+}) {
+  const {name, listId, index, parentId} = item;
   const itemToInsert = {
     id: item.id ? item.id : uuidv7(),
     name,
     list_id: listId,
-    index
+    index,
+    parent_id: parentId || null
   };
   const result = await sql`
       insert into items ${sql(itemToInsert)}
@@ -66,9 +74,10 @@ async function updateItem(update: UpdateItem) {
   const set = update.key === "parentId" ?
     {parent_id: update.value} : {[update.key]: update.value};
   const result = await sql`
-      update items 
+      update items
       set ${sql(set)}
-      where id = ${update.itemId} and list_id = ${update.listId}
+      where id = ${update.itemId}
+        and list_id = ${update.listId}
       returning *
   `;
 
@@ -84,4 +93,4 @@ export default {
   getItems,
   addItem,
   updateItem
-}
+};

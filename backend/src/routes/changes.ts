@@ -25,9 +25,9 @@ async function handleUpdateItem(userId: string, change: UpdateItem) {
   }
 }
 
-async function handleAddItem(userId: string, {listId, name, index, itemId}: AddItem) {
+async function handleAddItem(userId: string, {listId, name, index, itemId, parentId}: AddItem) {
   //TODO: check access with userId and listId
-  const result = await items.addItem({listId, name, index, id: itemId});
+  const result = await items.addItem({listId, name, index, id: itemId, parentId});
   notifySubscribers(`list-${listId}`, {
     type: "itemAdded",
     listId: listId,
