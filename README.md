@@ -1,7 +1,7 @@
 # TODO List application
 
 Application: https://utodo.svenskkod.io  
-Repository: https://github.com/svenskkod-io/utodo
+Repository: https://github.com/sfors/utodo
 
 ## Technical requirements
 - Language: TypeScript
@@ -32,7 +32,8 @@ Repository: https://github.com/svenskkod-io/utodo
 **Postgres** database for persistence. The database is hosted on DigitalOcean.  
 **Kubernetes** cluster hosted on DigitalOcean for running both frontend and backend as Docker containers.  
 **GitHub Actions** for building Docker images and deploying to Kubernetes. Workflows are triggered on commits to master
-branch.  
+branch. Workflow runs are not visible in this repository as I have reusable actions that are defined in a private
+repository. But I'll show them to you if you are interested.  
 **Authentication** using JWT signed with EdDSA/Ed25519  
 
 ## User Stories
