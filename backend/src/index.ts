@@ -1,4 +1,4 @@
-import express from "express";
+import express, {type NextFunction, type Request, type Response} from "express";
 import http from "http";
 import listRoutes from "./routes/lists.js";
 import userRoutes from "./routes/users.js";
@@ -21,6 +21,11 @@ app.use("/api/changes", changeRoutes);
 app.use("/api/users", userRoutes);
 app.use("/api/auth", authRoutes);
 app.use("/health", healthRoutes);
+
+app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
+  console.error(`Error in ${req.url}`, err.stack);
+  res.status(500).send();
+});
 
 server.listen(port);
 

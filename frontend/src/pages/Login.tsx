@@ -49,6 +49,11 @@ const Login = ({}) => {
                      onChange={e => setState({...state, verificationCode: e.target.value})}
               />
             </div>
+            {!!verifyMutation.error && (
+              <div className="rounded-md border border-white/20 p-1 bg-red-600 mt-6">
+                Incorrect verification code
+              </div>
+              )}
             <button
               className={`mt-6 cursor-pointer disabled:cursor-default w-full bg-linear-to-r from-green-700 to-emerald-700 hover:from-green-800 hover:to-emerald-800 text-sm text-white p-2 rounded-md${verifyMutation.isPending ? " animate-pulse" : ""}`}
               type="submit"

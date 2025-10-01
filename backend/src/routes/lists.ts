@@ -16,8 +16,8 @@ router.get("", async (req, res) => {
 
 router.post("", async (req, res) => {
   const userId = req.identity as string;
-  const {name} = req.body;
-  const result = await lists.addList({name: name, ownerId: userId});
+  const {id, name} = req.body;
+  const result = await lists.addList({id, name: name, ownerId: userId});
   res.json(result);
 });
 

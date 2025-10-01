@@ -53,8 +53,12 @@ function currentDate() {
   return new Date().toISOString().slice(0, 10);
 }
 
-async function addList({name, ownerId}: {name?: string, ownerId: string}) {
-  const listToInsert = {id: uuidv7(), name: name ? name : currentDate(), owner_id: ownerId};
+async function addList({id, name, ownerId}: {id?: string, name?: string, ownerId: string}) {
+  const listToInsert = {
+    id: id ? id : uuidv7(),
+    name: name ? name : currentDate(),
+    owner_id: ownerId
+  };
   const result = await sql`
       insert into lists ${sql(listToInsert)}
           returning *
@@ -83,7 +87,10 @@ async function updateList(update: UpdateList) {
 }
 
 async function isMember(listId: string, userId: string) {
-  const result = await sql`select * from members where list_id = ${listId} and user_id = ${userId}`;
+  const result = await sql`select *
+                           from members
+                           where list_id = ${listId}
+                             and user_id = ${userId}`;
   return (result.length > 0 && result[0]) as boolean;
 }
 

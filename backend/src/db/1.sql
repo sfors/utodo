@@ -38,3 +38,8 @@ create table items (
     custom_fields jsonb
 );
 
+create table verification_codes (
+    email varchar(255) not null,
+    code varchar(100) not null,
+    expires_at timestamptz not null
+)

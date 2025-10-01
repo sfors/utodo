@@ -1,6 +1,7 @@
 import express, {Router} from "express";
 import users from "./../store/users.js";
 import jwt from "./../auth/jwt.js";
+import {generateCode, sendVerificationCode} from "../email/verificationCode.js";
 
 const router: Router = express.Router();
 
@@ -16,22 +17,24 @@ router.post("/register", async (req, res) => {
     return;
   }
 
-  //TODO: create registration session in db
   res.status(200).json({message: "Verification code has been sent to your email address"});
 });
 
 router.post("/login", async (req, res) => {
   const {email} = req.body;
 
-  //TODO: send verification code and create login session
+  const code = generateCode();
+  await users.addCode({email, code});
+  await sendVerificationCode(email, code);
+
   res.status(200).json({message: "Verification code has been sent to your email address"});
 });
 
 router.post("/verify", async (req, res) => {
   const {email, code} = req.body;
 
-  //TODO: verify code and login/register session
-  if (code !== "123456") {
+  const isCodeCorrect = await users.checkCode({email, code});
+  if (!isCodeCorrect) {
     res.status(401).json({error: "Invalid code"});
     return;
   }

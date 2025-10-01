@@ -60,6 +60,26 @@ spec:
                 secretKeyRef:
                   name: utodo-secrets
                   key: jwt-public-key
+            - name: GRAPH_TENANT_ID
+              valueFrom:
+                secretKeyRef:
+                  name: utodo-secrets
+                  key: graph-tenant-id
+            - name: GRAPH_CLIENT_ID
+              valueFrom:
+                secretKeyRef:
+                  name: utodo-secrets
+                  key: graph-client-id
+            - name: GRAPH_CLIENT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: utodo-secrets
+                  key: graph-client-secret
+            - name: GRAPH_USER_ID
+              valueFrom:
+                secretKeyRef:
+                  name: utodo-secrets
+                  key: graph-user-id
           resources:
             requests:
               memory: "128Mi"
